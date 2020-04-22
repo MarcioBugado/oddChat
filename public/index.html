@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.4/socket.io.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,300;1,100&display=swap" rel="stylesheet">
+    <link rel="shortcut icon" href="./images/icon_black.png" type="image/x-icon">
+    <link rel="stylesheet" href="styles.css">
+    <title>oddChat</title>
+</head>
+<body>
+
+    <nav id="navbar"><img src="./images/icon.png" alt=""><h3>OddChat</h3></nav>
+    <form id="chat">
+        <input id="user" type="text" maxlength="15" required name="username" placeholder="Digite seu usuário!">
+        <div id="messages"></div>
+       <div id="controls">
+            <input id="box" type="text" name="message" placeholder="Digite sua mensagem">
+            <button id="btn" type="submit">Enviar</button>
+        </div>
+    </form>
+
+    
+
+    <script type="text/javascript">
+        var socket = io('http://192.168.2.152:3000', {transports: ['websocket']})
+
+        function renderMessage(message, user){
+        $('#messages').append(`<div class="${user}"><strong>${message.author}</strong>: ${message.message}</div>`)
+        }
+
+        function scrollToBottom() {
+            $("#messages").get(0).scrollTop = $("#messages").get(0).scrollHeight;
+        }
+
+        socket.on('previousMessages', function(messages){
+            
+            for(message of messages){
+                if(message.author === $('input[name=message]').val()){
+                    renderMessage(message, 'myself')
+                 }else{
+                    renderMessage(message, 'message')
+                }
+            }
+        })
+
+        socket.on('receivedMessage', function(message){
+            renderMessage(message, 'message')
+            scrollToBottom()
+        })
+
+
+
+
+        $('#chat').submit(function(event){
+            event.preventDefault()
+
+            let author = $('input[name=username]').val();
+            let message = $('input[name=message]').val();
+
+            if (author.length && message.length){
+                var messageObject = {
+                    author: author,
+                    message: message,
+                };
+            }
+
+            renderMessage(messageObject, 'myself')
+            
+            socket.emit('sendMessage', messageObject)
+            
+            $('input[name=message]').val('');
+            scrollToBottom()
+
+
+        })
+
+    </script>
+</body>
+</html>
