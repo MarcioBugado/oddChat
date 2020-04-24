@@ -5,20 +5,28 @@
     margin: 0;
     box-sizing: border-box;
     --background-main: #f5f6fa;
-    --text: #e9e5e5;
-    --main: #3b414a;
+    --text: white;
+    --main: #f35959;
     --white: #fff;
+    --background-secondary : #808080;
 
 }
 
+/* .main-color{
+    color: var(--main)
+} */
 
-
-body{
+body {
     height: 100vh;
     width: 100%;
-    background-color: var(--background-main);
+    background-color: #fff;
     font-family: 'Roboto', sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: end;
 }
+
 
 #navbar{
     display: flex;
@@ -28,6 +36,12 @@ body{
     height: 10vh;
     width: 100%;
     background-color: var(--main);
+    justify-content: space-between;
+}
+
+#navbar-icon{
+    display: flex;
+    align-items: center;
 }
 
 #navbar img{
@@ -36,23 +50,29 @@ body{
 
 }
 
+
+#logged{
+    border: 1px solid;
+    padding: 5px 10px;
+    border-radius: 3px;
+
+}
+
 #user {
     border: none;
     padding: 1.1em 1.5em;
-    font-weight: 600;
-    letter-spacing: 2px;
-    /* width: fit-content; */
+    color: #fff;
+    background-color: var(--main);
     font-family: 'Roboto', sans-serif;
     align-self: center;
     font-size: 1em;
     text-transform: capitalize;
-    border: 1px solid var(--main);
     margin-top: 1em;
+    text-align: center;
 }
 
 .myself{
    align-self: flex-end;
-    border: 1px solid var(--main);
     background-color: var(--white);
     color: var(--main);
     padding: .9em;
@@ -62,11 +82,12 @@ body{
     word-break: break-word;
     margin: 4px 0;
     font-family: 'Roboto', sans-serif;
-    line-height: 1.5em;
+    line-height: .5em;
+    font-size: .9em;
 }
 
 #chat{
-    height: 90vh;
+    height: 84vh;
     width: 100%;
     display: flex;
     align-items: center;
@@ -78,14 +99,14 @@ body{
 
 #messages{
     min-width: 200px;
-    width: 50%;
-    height: 60%;
+    width: 75%;
+    height: 66%;
     overflow-y: scroll;
-    background-color: var(--white);
+    background-color: #f3f3f3;
     margin: 1em;
     border-radius: 5px;
     padding: 2em .5em;
-    border-bottom: 2px solid var(--main);
+    border-bottom: 1px solid var(--main);
     position: relative;
     display: flex;
     flex-direction: column;
@@ -97,7 +118,7 @@ body{
 
 
 .message {
-    border: 1px solid var(--main);
+
     background-color: var(--main);
     color: var(--text);
     padding: .9em;
@@ -108,6 +129,22 @@ body{
     margin: 4px 0;
     font-family: 'Roboto', sans-serif;
     line-height: 1.5em;
+    font-size: .8em;
+}
+
+.oddChat {
+
+    background-color: var(--background-secondary);
+    color: var(--text);
+    padding: .9em;
+    border-radius: 5px;
+    display: block;
+    width: fit-content;
+    word-break: break-word;
+    margin: 4px 0;
+    font-family: 'Roboto', sans-serif;
+    line-height: 1.5em;
+    font-size: .8em;
 }
 
 #controls{
@@ -124,7 +161,7 @@ body{
     border: none;
     padding: 2px 5px;
     outline: var(--main);
-    border: 3px solid var(--main);
+    border: 1px solid var(--main);
     font-size: 1em;
 
 }
@@ -135,20 +172,37 @@ body{
  background-color: var(--main);
  color: var(--white);
  border: none;
+ transition: .2s;
 }
 
+#btn:hover{
+    background-color: #fd3c3c;
+}
+
+#user::placeholder{
+    color:#fff;
+}
+
+
+
+
+
+
+
+
+/* asdhasd================================================ih */
 
 
 @media only screen and (max-width: 1000px){
     
     #messages{
-        width: 98%;
-        height: 60%;
+        width: 100%;
+        height: 80%;
         overflow-y: scroll;
-        background-color: var(--white);
+        background-color: #f3f3f3;
         margin: 0;
         padding: 1em .3em;
-        border-bottom: 2px solid var(--main);
+        border-bottom: 1px solid var(--main);
         border-radius: 0;
         position: relative;
         display: flex;
@@ -156,37 +210,55 @@ body{
     }
 
     .message{
-        font-size: .8em;
+        font-size: .9em;
         border-radius: 5px;
+        line-height: 1.5em;
     }
 
     #controls {
-        width: 99%;
+        width: 100%;
         height: 20%;
         display: flex;
         justify-content: space-around;
         flex-wrap: wrap;
     }
 
-    #box {
-        width: 99%;
+    #user {
+        width: 100%;
+        margin-top: 0;
+        padding: .8em .3em;
+        text-align: center;
+        background-color: white;
+        color: black;
+    }
+
+   
+
+    #box{
+        width: 100%;
         height: 80%;
+        border: none;
         padding: 2px 5px;
         outline: var(--main);
         font-size: 1em;
-        border: none;
+    
     }
 
     #btn {
         height: 70%;
-        width: 99%;
+        width: 100%;
         background-color: var(--main);
         color: var(--white);
         border: none;
+        transition: .2s;
+    }
+
+    #btn:hover{
+        background-color: #fd3c3c;
     }
 
     #chat {
-        height: 90vh;
+        height: 70vh;
         width: 100%;
         display: flex;
         align-items: center;
@@ -197,9 +269,14 @@ body{
 
     #user{
         width: 100%;
-        border-bottom: 1px solid var(--main);
         margin-top: 0;
         padding: .8em .3em;
+        text-align: center;
+        
+    }
+
+    #user::placeholder{
+        color:var(--main);
     }
 
 
@@ -216,6 +293,21 @@ body{
          margin: 4px 0;
          font-family: 'Roboto', sans-serif;
          line-height: 1.5em;
-         font-size: .8em;
+         font-size: .9em;
      }
+
+     .oddChat {
+
+        background-color: var(--background-secondary);
+        color: var(--text);
+        padding: .9em;
+        border-radius: 5px;
+        display: block;
+        width: fit-content;
+        word-break: break-word;
+        margin: 4px 0;
+        font-family: 'Roboto', sans-serif;
+        line-height: 1.5em;
+        font-size: .8em;
+    }
 }

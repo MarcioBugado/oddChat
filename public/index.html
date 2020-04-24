@@ -13,9 +13,18 @@
 </head>
 <body>
 
-    <nav id="navbar"><img src="./images/icon.png" alt=""><h3>OddChat</h3></nav>
-    <form id="chat">
+    <nav id="navbar">
+        <div id="navbar-icon">
+            <img src="./images/icon.png" alt="">
+            <h3>OddChat</h3>
+        </div>
+        <h3 id="logged">0</h3>
+    </nav>
+    
+    
         <input id="user" type="text" maxlength="15" required name="username" placeholder="Digite seu usuário!">
+    <form id="chat">
+       
         <div id="messages"></div>
        <div id="controls">
             <input id="box" type="text" name="message" placeholder="Digite sua mensagem">
@@ -26,24 +35,40 @@
     
 
     <script type="text/javascript">
-        var socket = io('http://192.168.2.152:3000', {transports: ['websocket']})
+        var socket = io('/', {transports: ['websocket']})
+
+        let messages  = document.querySelector('#messages')
+        let userField  = document.querySelector('#user')
+        let box = document.querySelector("#box")
+        let chat = document.querySelector('#chat')
+        let user = '';
+
+        function updateUsersLogged(logged){
+            document.querySelector('#logged').innerText = logged;
+        }
 
         function renderMessage(message, user){
-        $('#messages').append(`<div class="${user}"><strong>${message.author}</strong>: ${message.message}</div>`)
+        messages.insertAdjacentHTML('beforeend', `<div class="${user}"><strong class="main-color">${message.author}</strong>: ${message.message}</div>`)
         }
 
         function scrollToBottom() {
-            $("#messages").get(0).scrollTop = $("#messages").get(0).scrollHeight;
+            messages.scrollTop = messages.scrollHeight;
         }
 
-        socket.on('previousMessages', function(messages){
-            
+        socket.on('updateUsers', function(logged){
+            updateUsersLogged(logged)
+        })
+
+        socket.on('previousMessages', function(messages, logged){
+            updateUsersLogged(logged)
+
             for(message of messages){
-                if(message.author === $('input[name=message]').val()){
+                if(message.author === userField.value){
                     renderMessage(message, 'myself')
                  }else{
                     renderMessage(message, 'message')
                 }
+
             }
         })
 
@@ -52,14 +77,40 @@
             scrollToBottom()
         })
 
+        socket.on('newUser', function(user, logged){
+            console.log(user)
+            console.log(logged)
+            renderMessage({author:'oddChat',message:`Bem vindo, ${user}!`}, 'oddChat')
+            updateUsersLogged(logged)
+        })
+        
+        userField.addEventListener("keypress", function( event ) {
+            if ( event.which == 13) {
+                let user = userField.value
+                console.log(event)
+                socket.emit('register', user )
+                userField.setAttribute("disabled", "disabled")
+            }
+         })
+
+         socket.on('invalidUser', function(){
+            userField.value = "Usuário Indisponível!"
+            setTimeout(()=>{
+                userField.value = ""
+            },1500)
+            userField.removeAttribute('disabled')
+         })
 
 
-
-        $('#chat').submit(function(event){
+        chat.addEventListener('submit', function(event){
             event.preventDefault()
+            if(!userField.value){
+                alert('Digite seu usuário!')
+                return
+            }
 
-            let author = $('input[name=username]').val();
-            let message = $('input[name=message]').val();
+            let author = userField.value
+            let message = box.value
 
             if (author.length && message.length){
                 var messageObject = {
@@ -72,12 +123,16 @@
             
             socket.emit('sendMessage', messageObject)
             
-            $('input[name=message]').val('');
+            box.value = "";
+            if(!userField.hasAttribute('disabled')){
+                userField.setAttribute("disabled","disabled")
+            }
             scrollToBottom()
 
 
         })
 
     </script>
+
 </body>
 </html>

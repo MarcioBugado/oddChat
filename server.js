@@ -19,16 +19,44 @@ let users = [];
 
 io.on('connection', socket =>{
     console.log(`Socket conectado: ${socket.id}`)
-
-    socket.emit('previousMessages', messages)
+    
+    let logged = io.engine.clientsCount;
+    
+    socket.broadcast.emit('updateUsers',logged )
+    
+    socket.emit('previousMessages', messages, logged)
 
     socket.on('sendMessage', data =>{
         
         console.log(data)
         messages.push(data)
         socket.broadcast.emit('receivedMessage', data)
+        console.log(io.engine.clientsCount)
     })
+
+    socket.on('register', user =>{
+        if(users.indexOf(user) == -1){
+            let logged = io.engine.clientsCount;
+            users.push(user)
+            console.log(user + ' Logado' )
+            console.log(users)
+            socket.broadcast.emit('newUser', user, logged)
+            console.log(logged)
+        }else{
+            socket.emit('invalidUser')
+            console.log(user + 'já logado' )
+        }
+    })
+
+    socket.on('disconnect', desconectado =>{
+        let logged = io.engine.clientsCount;
+        socket.broadcast.emit('updateUsers',logged)
+        console.log('Disconectado!')
+    })
+
 })
 
 
-server.listen(3000)
+
+
+server.listen(process.env.PORT || 3000, ()=> console.log('Running'))
