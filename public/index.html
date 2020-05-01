@@ -13,16 +13,25 @@
 </head>
 <body>
 
+    <div id="loginDisplay">
+            <div><span>oddChat</span><img class="" id="mainImage" src="./images/icon_black.png" alt=""></div>
+        <input id="user" type="text" maxlength="15" required name="username" placeholder="Digite seu usuário!">
+    </div>
+
     <nav id="navbar">
         <div id="navbar-icon">
             <img src="./images/icon.png" alt="">
             <h3>OddChat</h3>
         </div>
-        <h3 id="logged">0</h3>
+
+        <div id="online">
+            <span>Online</span>
+            <h3 id="logged">0</h3>
+        </div>
     </nav>
     
     
-        <input id="user" type="text" maxlength="15" required name="username" placeholder="Digite seu usuário!">
+       
     <form id="chat">
        
         <div id="messages"></div>
@@ -41,7 +50,11 @@
         let userField  = document.querySelector('#user')
         let box = document.querySelector("#box")
         let chat = document.querySelector('#chat')
+        let loginDisplay = document.querySelector('#loginDisplay')
+        let mainImage = document.querySelector('#mainImage')
+
         let user = '';
+        let invalid = false;
 
         function updateUsersLogged(logged){
             document.querySelector('#logged').innerText = logged;
@@ -57,6 +70,10 @@
 
         socket.on('updateUsers', function(logged){
             updateUsersLogged(logged)
+        })
+
+        socket.on('disconnected', function(){
+            renderMessage({author:'oddChat',message:`Um usuário deixou o Chat.`}, 'oddChat')
         })
 
         socket.on('previousMessages', function(messages, logged){
@@ -80,24 +97,50 @@
         socket.on('newUser', function(user, logged){
             console.log(user)
             console.log(logged)
-            renderMessage({author:'oddChat',message:`Bem vindo, ${user}!`}, 'oddChat')
+            renderMessage({author:'oddChat',message:`${user} acabou de entrar no Chat!`}, 'oddChat')
             updateUsersLogged(logged)
         })
         
         userField.addEventListener("keypress", function( event ) {
-            if ( event.which == 13) {
+           
+            if ( event.which == 13 && userField.value) {
+                mainImage.classList.toggle('upDown')
                 let user = userField.value
                 console.log(event)
                 socket.emit('register', user )
+                
                 userField.setAttribute("disabled", "disabled")
-            }
+             }
+         })
+
+         socket.on('validUser', function(user){
+               
+            setTimeout(()=>{
+                mainImage.classList.toggle('upDown')
+
+            },2000)
+            setTimeout(() =>{
+                
+                loginDisplay.style.opacity = 0;    
+            },3000)
+
+            setTimeout(()=>{
+                renderMessage({author:'oddChat', message:`Opa, tudo bem, ${user}!? Aproveite o Chat!`}, 'oddChat')
+                loginDisplay.style.display = 'none';
+
+            },7000)
+            
+
+            
+
          })
 
          socket.on('invalidUser', function(){
-            userField.value = "Usuário Indisponível!"
-            setTimeout(()=>{
-                userField.value = ""
-            },1500)
+            userField.value = ""
+            userField.placeholder = "Usuário Indisponível!"
+            mainImage.classList.toggle('upDown')
+            loginDisplay.style.display = 'flex';
+            loginDisplay.style.opacity = 1;
             userField.removeAttribute('disabled')
          })
 

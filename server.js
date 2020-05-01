@@ -25,6 +25,7 @@ io.on('connection', socket =>{
     socket.broadcast.emit('updateUsers',logged )
     
     socket.emit('previousMessages', messages, logged)
+    
 
     socket.on('sendMessage', data =>{
         
@@ -41,6 +42,7 @@ io.on('connection', socket =>{
             console.log(user + ' Logado' )
             console.log(users)
             socket.broadcast.emit('newUser', user, logged)
+            socket.emit('validUser', user)
             console.log(logged)
         }else{
             socket.emit('invalidUser')
@@ -51,6 +53,7 @@ io.on('connection', socket =>{
     socket.on('disconnect', desconectado =>{
         let logged = io.engine.clientsCount;
         socket.broadcast.emit('updateUsers',logged)
+        socket.broadcast.emit('disconnected')
         console.log('Disconectado!')
     })
 
